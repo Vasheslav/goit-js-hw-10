@@ -1,6 +1,7 @@
 import Notiflix from 'notiflix';
 import debounce from 'lodash.debounce';
 import './css/styles.css';
+import { fetchCountries } from './fetchCountries';
 
 const DEBOUNCE_DELAY = 300;
 
@@ -19,8 +20,6 @@ function onSearch(e) {
 
   fetchCountries(nameCountries)
     .then(countries => {
-      console.log(countries);
-
       if (countries.length > 10) {
         refs.countryInfo.innerHTML = '';
         refs.countryList.innerHTML = '';
@@ -32,11 +31,6 @@ function onSearch(e) {
       }
 
       if (countries.length >= 2 && countries.length <= 10) {
-        refs.countryInfo.innerHTML = '';
-        if (refs.countryList) {
-          refs.countryList.innerHTML = '';
-        }
-
         const countryList = countries
           .map(
             el =>
@@ -47,19 +41,19 @@ function onSearch(e) {
           )
           .join('');
 
-        refs.countryList.insertAdjacentHTML('beforeend', countryList);
+        refs.countryList.innerHTML = countryList;
         return;
       }
 
       if (countries.length === 1) {
-        refs.countryList.innerHTML = '';
-
         const countryInfo = countries
           .map(
             el =>
-              `<img class='country-image' src='${el.flags.svg}' 
-              alt='${el.name.official}' width='40px'/>
-            <h1>${el.name.official}</h1> 
+              `<div class='country-title'>
+              <img class='country-image' src='${el.flags.svg}' 
+              alt='${el.name.official}' width='100px'/>
+            <h1 class='country-name_title'>${el.name.official}</h1> 
+            </div>
             <li class='country-info_list'>
             <p class='country-info'>Capital:
             <span class="info-values">${el.capital}</span></p>
@@ -77,7 +71,7 @@ function onSearch(e) {
           )
           .join('');
 
-        refs.countryList.insertAdjacentHTML('beforeend', countryInfo);
+        refs.countryList.innerHTML = countryInfo;
         return;
       }
 
@@ -93,12 +87,4 @@ function onSearch(e) {
     .catch(error => {
       console.log(error);
     });
-}
-
-function fetchCountries(name) {
-  return fetch(
-    `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`
-  ).then(response => {
-    return response.json();
-  });
 }
