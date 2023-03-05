@@ -16,6 +16,11 @@ function onSearch(e) {
 
   let nameCountries = e.target.value.trim();
 
+  if (!nameCountries) {
+    Notiflix.Notify.info('Please enter the name of the country!');
+    return;
+  }
+
   fetchCountries(nameCountries)
     .then(countries => {
       if (countries.length > 10) {
